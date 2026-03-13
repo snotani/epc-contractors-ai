@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useRef, useEffect } from "react";
+import { Menu } from "lucide-react";
 import type { ChatMessage, PanelView } from "@/lib/types";
 import { DEMO_PROJECTS, VERSION_HISTORY } from "@/data/projects";
 import {
@@ -40,6 +41,7 @@ export default function Home() {
   const [isTyping, setIsTyping] = useState(false);
   const [demoStepIndex, setDemoStepIndex] = useState(-1);
   const [demoRunning, setDemoRunning] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const demoTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
 
@@ -318,6 +320,7 @@ export default function Home() {
       setSelectedProjectId(id);
       setPanelView(null);
       setIsTyping(false);
+      setSidebarOpen(false);
       if (demoRunning && id !== "proj-jc-h2") {
         if (demoTimeoutRef.current) {
           clearTimeout(demoTimeoutRef.current);
@@ -331,6 +334,7 @@ export default function Home() {
   const handleNewProject = useCallback(() => {
     setSelectedProjectId("proj-jc-h2");
     setPanelView(null);
+    setSidebarOpen(false);
     if (!demoRunning) {
       startDemo();
     }
@@ -383,20 +387,28 @@ export default function Home() {
           selectedProjectId={selectedProjectId}
           onSelectProject={handleSelectProject}
           onNewProject={handleNewProject}
+          mobileOpen={sidebarOpen}
+          onMobileClose={() => setSidebarOpen(false)}
         />
 
         <div className="flex flex-1 min-w-0 min-h-0">
           <div className="flex-1 min-w-0 min-h-0 flex flex-col">
             {selectedProjectId ? (
               <>
-                <div className="h-12 flex items-center justify-between px-4 border-b border-[#3D3D3D] bg-[#252525] shrink-0">
-                  <div className="flex items-center gap-3">
+                <div className="h-12 flex items-center justify-between px-3 md:px-4 border-b border-[#3D3D3D] bg-[#252525] shrink-0">
+                  <div className="flex items-center gap-2 md:gap-3 min-w-0">
+                    <button
+                      onClick={() => setSidebarOpen(true)}
+                      className="md:hidden flex h-8 w-8 items-center justify-center rounded-md text-[#8A8886] hover:bg-[#3D3D3D] hover:text-white transition-colors shrink-0"
+                    >
+                      <Menu size={18} />
+                    </button>
                     <h2 className="text-white font-semibold text-sm truncate">
                       {DEMO_PROJECTS.find(
                         (p) => p.id === selectedProjectId
                       )?.name || "Project"}
                     </h2>
-                    <span className="text-[#8A8886] text-xs">
+                    <span className="text-[#8A8886] text-xs hidden sm:inline">
                       {DEMO_PROJECTS.find(
                         (p) => p.id === selectedProjectId
                       )?.rfqNumber}

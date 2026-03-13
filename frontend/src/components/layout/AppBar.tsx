@@ -27,7 +27,7 @@ const navItems = [
 
 export default function AppBar({ activeTab, onTabChange }: AppBarProps) {
   return (
-    <div className="flex h-full w-12 shrink-0 flex-col items-center bg-[#1B1B1B] py-3">
+    <div className="hidden md:flex h-full w-12 shrink-0 flex-col items-center bg-[#1B1B1B] py-3">
       {/* Logo */}
       <div className="mb-6 flex h-8 w-8 items-center justify-center">
         <svg

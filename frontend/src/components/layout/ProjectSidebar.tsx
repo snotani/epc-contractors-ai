@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Search } from "lucide-react";
+import { Plus, Search, X } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import type { Project, ProjectStatus } from "@/lib/types";
 
@@ -10,6 +10,8 @@ interface ProjectSidebarProps {
   selectedProjectId: string | null;
   onSelectProject: (id: string) => void;
   onNewProject: () => void;
+  mobileOpen?: boolean;
+  onMobileClose?: () => void;
 }
 
 const statusConfig: Record<
@@ -32,6 +34,8 @@ export default function ProjectSidebar({
   selectedProjectId,
   onSelectProject,
   onNewProject,
+  mobileOpen = false,
+  onMobileClose,
 }: ProjectSidebarProps) {
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -41,17 +45,27 @@ export default function ProjectSidebar({
       p.client.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  return (
+  const sidebarContent = (
     <div className="flex h-full w-80 shrink-0 flex-col border-r border-[#3D3D3D] bg-[#292929]">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3">
         <h2 className="text-base font-semibold text-white">Projects</h2>
-        <button
-          onClick={onNewProject}
-          className="flex h-7 w-7 items-center justify-center rounded-md text-[#7B83EB] transition-colors hover:bg-[#3D3D3D]"
-        >
-          <Plus size={18} />
-        </button>
+        <div className="flex items-center gap-1">
+          <button
+            onClick={onNewProject}
+            className="flex h-7 w-7 items-center justify-center rounded-md text-[#7B83EB] transition-colors hover:bg-[#3D3D3D]"
+          >
+            <Plus size={18} />
+          </button>
+          {onMobileClose && (
+            <button
+              onClick={onMobileClose}
+              className="flex md:hidden h-7 w-7 items-center justify-center rounded-md text-[#8A8886] transition-colors hover:bg-[#3D3D3D] hover:text-white"
+            >
+              <X size={18} />
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Search */}
@@ -126,5 +140,25 @@ export default function ProjectSidebar({
         </div>
       </ScrollArea>
     </div>
+  );
+
+  return (
+    <>
+      {/* Desktop: always visible */}
+      <div className="hidden md:block">{sidebarContent}</div>
+
+      {/* Mobile: slide-over drawer with backdrop */}
+      {mobileOpen && (
+        <div className="fixed inset-0 z-50 md:hidden">
+          <div
+            className="absolute inset-0 bg-black/60"
+            onClick={onMobileClose}
+          />
+          <div className="absolute inset-y-0 left-0 animate-slide-in-left">
+            {sidebarContent}
+          </div>
+        </div>
+      )}
+    </>
   );
 }
