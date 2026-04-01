@@ -30,3 +30,9 @@ venv/
 
 # Docker
 pgdata/
+
+# Sizing automation
+sizing-automation/VP*/
+sizing-automation/output/
+sizing-automation/clean-docs/
+sizing-automation/.venv/
